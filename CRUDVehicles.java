@@ -10,20 +10,28 @@ public class CRUDVehicles {
 
     public static void main(String[] args) {
         try {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Error: No se encontró el driver de MySQL.");
+                e.printStackTrace();
+                return;
+            }
+
             conexion = DriverManager.getConnection(URL, USUARIO, PASSWORD);
             System.out.println("Conexión exitosa a la base de datos.");
 
             while (true) {
-                System.out.println("\n--- Menú CRUD Vehicles ---");
-                System.out.println("1. Insertar vehículo");
-                System.out.println("2. Mostrar vehículos");
-                System.out.println("3. Actualizar vehículo");
-                System.out.println("4. Eliminar vehículo");
-                System.out.println("5. Salir");
-                System.out.print("Seleccione una opción: ");
+                System.out.println("Menu CRUD \n Selecciona con el numero que indica a la izquirda.");
+                System.out.println("[1] Insertar vehículo");
+                System.out.println("[2] Mostrar vehículos");
+                System.out.println("[3] Actualizar vehículo");
+                System.out.println("[4] Eliminar vehículo");
+                System.out.println("[5] Salir");
+                System.out.print(" ");
 
                 int opcion = scanner.nextInt();
-                scanner.nextLine(); 
+                scanner.nextLine();
 
                 switch (opcion) {
                     case 1 -> insertarVehiculo();
@@ -32,13 +40,14 @@ public class CRUDVehicles {
                     case 4 -> eliminarVehiculo();
                     case 5 -> {
                         cerrarConexion();
-                        System.out.println("Saliendo...");
+                        System.out.println("Hasta la proxima.");
                         return;
                     }
                     default -> System.out.println("Opción no válida.");
                 }
             }
         } catch (SQLException e) {
+            System.out.println("Error: No se pudo conectar a la base de datos.");
             e.printStackTrace();
         }
     }
@@ -59,7 +68,7 @@ public class CRUDVehicles {
             stmt.setString(2, modelo);
             stmt.setInt(3, capacidadMaletero);
             stmt.executeUpdate();
-            System.out.println("Vehículo insertado correctamente.");
+            System.out.println("Vehículo introducido correctamente.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -71,7 +80,7 @@ public class CRUDVehicles {
         try (Statement stmt = conexion.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
-            System.out.println("\nLista de vehículos:");
+            System.out.println("Lista de vehículos:");
             while (rs.next()) {
                 System.out.printf("ID: %d | Marca: %s | Modelo: %s | Capacidad Maletero: %dL%n",
                         rs.getInt("Id"), rs.getString("Marca"), rs.getString("Model"), rs.getInt("CapacitatMaleter"));
@@ -103,9 +112,9 @@ public class CRUDVehicles {
             int filasActualizadas = stmt.executeUpdate();
 
             if (filasActualizadas > 0) {
-                System.out.println("Vehículo actualizado correctamente.");
+                System.out.println("Vehículo actualizado.");
             } else {
-                System.out.println("No se encontró el vehículo con ID: " + id);
+                System.out.println("No se encontró el vehículo con la ID: " + id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +122,7 @@ public class CRUDVehicles {
     }
 
     private static void eliminarVehiculo() {
-        System.out.print("Ingrese el ID del vehículo a eliminar: ");
+        System.out.print("Ingrese el ID del vehículo que se va a eliminar: ");
         int id = scanner.nextInt();
         scanner.nextLine();
 
@@ -124,9 +133,9 @@ public class CRUDVehicles {
             int filasEliminadas = stmt.executeUpdate();
 
             if (filasEliminadas > 0) {
-                System.out.println("Vehículo eliminado correctamente.");
+                System.out.println("Vehículo eliminado.");
             } else {
-                System.out.println("No se encontró el vehículo con ID: " + id);
+                System.out.println("No se encontró el vehículo de ID: " + id);
             }
         } catch (SQLException e) {
             e.printStackTrace();
